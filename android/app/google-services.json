@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "749233143031",
+    "project_id": "learn-react-native-c25c4",
+    "storage_bucket": "learn-react-native-c25c4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:749233143031:android:a4b745fb23da53895ba7f2",
+        "android_client_info": {
+          "package_name": "com.reactfirebaseapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "749233143031-qo1f7rhfhrrs3t31cubj1r1bq3udvsl9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAanSRiXmaUaEXfjNoGGCYsOOxwf8e17pw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "749233143031-qo1f7rhfhrrs3t31cubj1r1bq3udvsl9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
