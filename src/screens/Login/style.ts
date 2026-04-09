@@ -42,4 +42,7 @@ export const loginStyle = StyleSheet.create({
     textAlign: 'center',
   },
   googleBtn: { width: '100%', height: 60 },
+  submitContainer: {
+    gap: 10,
+  },
 });

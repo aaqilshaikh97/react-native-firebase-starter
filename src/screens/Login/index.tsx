@@ -10,37 +10,97 @@ import auth from '@react-native-firebase/auth';
 import { loginStyle } from './style';
 import { LoginUrl, WebClientID } from '../../const/url';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
+
 const Login = () => {
   const navigation = useNavigation<any>();
 
   const handleLogin = async (values: { email: string; password: string }) => {
-    console.log('email', values.email);
-    console.log('password', values.password);
-    console.log('baseURL', LoginUrl);
-
     try {
-      const response = await axios.post(LoginUrl, {
-        username: values.email,
-        password: values.password,
-      });
+      const userCredential = await auth().signInWithEmailAndPassword(
+        values.email,
+        values.password,
+      );
+      console.log('data', userCredential);
 
-      console.log('Login Success:', response.data);
-      const token = response.data.data.access;
-      const firstName = response.data.data.account?.first_name || '';
-      const lastName = response.data.data.account?.last_name || '';
+      const user = userCredential.user;
 
-      const name = `${firstName} ${lastName}`.trim();
+      console.log('Firebase Login Success:', user);
+
+      // Store token (optional)
+      const token = await user.getIdToken();
       await AsyncStorage.setItem('userToken', token);
+
+      const name = user.displayName || user.email || '';
       await AsyncStorage.setItem('userName', name);
+
       navigation.replace('Home');
     } catch (error: any) {
-      console.error('Login Error:', error);
-      console.log('FULL ERROR:', error.response?.data);
+      console.log('Firebase Login Error:', error);
 
-      Alert.alert('Error', 'Something went wrong');
+      if (error.code === 'auth/user-not-found') {
+        Alert.alert('Error', 'User not found');
+      } else if (error.code === 'auth/wrong-password') {
+        Alert.alert('Error', 'Invalid password');
+      } else {
+        Alert.alert('Error', error.message);
+      }
     }
   };
-  //google login
+
+  const handleSignup = async (values: { email: string; password: string }) => {
+    try {
+      const userCredential = await auth().createUserWithEmailAndPassword(
+        values.email,
+        values.password,
+      );
+
+      const user = userCredential.user;
+
+      console.log('Signup Success:', user);
+
+      const token = await user.getIdToken();
+      await AsyncStorage.setItem('userToken', token);
+
+      navigation.replace('Home');
+    } catch (error: any) {
+      console.log('Signup Error:', error);
+
+      if (error.code === 'auth/email-already-in-use') {
+        Alert.alert('Error', 'Email already exists');
+      } else if (error.code === 'auth/weak-password') {
+        Alert.alert('Error', 'Password should be at least 6 characters');
+      } else {
+        Alert.alert('Error', error.message);
+      }
+    }
+  };
+  // const handleLogin = async (values: { email: string; password: string }) => {
+  //   console.log('email', values.email);
+  //   console.log('password', values.password);
+  //   console.log('baseURL', LoginUrl);
+
+  //   try {
+  //     const response = await axios.post(LoginUrl, {
+  //       username: values.email,
+  //       password: values.password,
+  //     });
+
+  //     console.log('Login Success:', response.data);
+  //     const token = response.data.data.access;
+  //     const firstName = response.data.data.account?.first_name || '';
+  //     const lastName = response.data.data.account?.last_name || '';
+
+  //     const name = `${firstName} ${lastName}`.trim();
+  //     await AsyncStorage.setItem('userToken', token);
+  //     await AsyncStorage.setItem('userName', name);
+  //     navigation.replace('Home');
+  //   } catch (error: any) {
+  //     console.error('Login Error:', error);
+  //     console.log('FULL ERROR:', error.response?.data);
+
+  //     Alert.alert('Error', 'Something went wrong');
+  //   }
+  // };
   useEffect(() => {
     GoogleSignin.configure({
       webClientId: WebClientID,
@@ -131,7 +191,18 @@ const Login = () => {
             )}
 
             {/* Button */}
-            <Button onPress={handleSubmit as any} title="Login" />
+            <View style={loginStyle.submitContainer}>
+              <Button onPress={handleSubmit as any} title="Login" />
+              <Button
+                title="Signup"
+                onPress={() =>
+                  handleSignup({
+                    email: values.email,
+                    password: values.password,
+                  })
+                }
+              />
+            </View>
           </>
         )}
       </Formik>
